@@ -37,6 +37,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	err = CheckSupportedK8sVersion(cfg)
+	if err != nil {
+		log.Fatalf("failed to get watch namespace: %v", err)
+	}
+
 	// Create a new Cmd to provide shared dependencies and start components
 	mgr, err := manager.New(cfg, manager.Options{Namespace: namespace})
 	if err != nil {
@@ -46,12 +51,12 @@ func main() {
 	log.Print("Registering Components.")
 
 	// Setup Scheme for all resources
-	if err := apis.AddToScheme(mgr.GetScheme()); err != nil {
+	if err = apis.AddToScheme(mgr.GetScheme()); err != nil {
 		log.Fatal(err)
 	}
 
 	// Setup all Controllers
-	if err := controller.AddToManager(mgr); err != nil {
+	if err = controller.AddToManager(mgr); err != nil {
 		log.Fatal(err)
 	}
 
